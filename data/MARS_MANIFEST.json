@@ -1,0 +1,71 @@
+{
+  "source_catalog": "imeo_mars",
+  "title": "UNEP IMEO MARS — Methane Alert and Response System",
+  "description": "UN super-emitter alert system detected plumes + sources catalog. Global, multi-satellite.",
+  "homepage_url": "https://methanedata.unep.org/",
+  "data_url": "https://methanedata.unep.org/plumemap",
+  "data_download_procedure": "Visit https://methanedata.unep.org/plumemap → 'Download data' button → opt for CSV bundle (zip with detected_plumes + detected_sources CSV + definitions PDF + LICENSE). No stable direct-link URL — refresh manual.",
+  "license": "CC BY-NC-SA 4.0",
+  "license_file": "LICENSE-CC-BY-NC-SA.txt",
+  "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "license_note": "Non-commercial + share-alike. Raw bundle is NOT redistributed via this repo per license friction — must be re-downloaded by each user from data_url above. Project derivative (ingested GEE FeatureCollection) is held internally under RuPlumeScan/refs/imeo_mars_v1 and not redistributed; aggregate statistics are reported в research publications с attribution.",
+  "citation_short": "UNEP IMEO MARS, methanedata.unep.org",
+  "retrieved_date_canonical": "2026-05-15",
+  "retrieved_by": "RuPlumeScan project, Šаг 8b Tier 2 ingestion",
+  "schema_version": "1.1",
+  "global_record_counts": {
+    "detected_plumes_csv": "global (full mission to date, 2021-2026)",
+    "detected_sources_csv": "global persistent-source aggregation"
+  },
+  "aoi_subset_used": {
+    "lon_min": 60.0,
+    "lon_max": 95.0,
+    "lat_min": 50.0,
+    "lat_max": 75.0,
+    "aoi_event_count": 446,
+    "aoi_temporal_range": "2022-01 to 2026-01",
+    "gee_asset": "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/refs/imeo_mars_v1"
+  },
+  "files": [
+    {
+      "filename": "unep_methanedata_detected_plumes.csv",
+      "description": "Per-detection event-level plume catalog (event id, date, lat/lon, satellite, sector, country, ch4_fluxrate, etc.)",
+      "sha256": "c423c101430b06f7b920563900fa65cba1fe238fceff5670d141768871eb4f9f",
+      "bytes": 7524305,
+      "tracked_in_git": false,
+      "gitignore_rule": "data/refs/imeo_mars/*.csv"
+    },
+    {
+      "filename": "unep_methanedata_detected_sources.csv",
+      "description": "Persistent source catalog (aggregated repeat-emitter records)",
+      "sha256": "c74fa85eee9e67dbf333450eade3475eec4759714077e4470a2cb2e5b4c30f2e",
+      "bytes": 564080,
+      "tracked_in_git": false,
+      "gitignore_rule": "data/refs/imeo_mars/*.csv"
+    },
+    {
+      "filename": "unep_methanedata_detected_plumes_csv.zip",
+      "description": "Original distribution zip bundle",
+      "sha256": "35d2ead6615d23171dc44cc5b716e112d3b96528ec7f68c6350642af5b27c394",
+      "bytes": 8242494,
+      "tracked_in_git": false,
+      "gitignore_rule": "*.zip (global gitignore)"
+    },
+    {
+      "filename": "definitions_detected_plumes_sources.pdf",
+      "description": "Field definitions reference document (publisher-provided)",
+      "sha256": "0d3d0d629dffe8cd9df312a9fac5818531379142fbb10793371dd77e26b2d6c3",
+      "bytes": 132664,
+      "tracked_in_git": false,
+      "gitignore_rule": "data/refs/imeo_mars/*.pdf"
+    },
+    {
+      "filename": "LICENSE-CC-BY-NC-SA.txt",
+      "description": "CC BY-NC-SA 4.0 license text (publisher-provided)",
+      "sha256_n/a": "license text — tracked indirectly via license_url. May vary across re-downloads (whitespace/encoding). Verified at retrieved_date_canonical to match the canonical CC license.",
+      "tracked_in_git": false,
+      "gitignore_rule": "data/refs/imeo_mars/*.txt"
+    }
+  ],
+  "verification_procedure": "Run `python src/py/setup/verify_imeo_mars_manifest.py` after re-download to check SHA-256 hashes match the canonical 2026-05-15 retrieval. Mismatch = data has been updated на upstream side; consult MARS changelog before re-ingesting к GEE."
+}

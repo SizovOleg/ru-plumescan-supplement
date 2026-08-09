@@ -1,0 +1,68 @@
+cff-version: 1.2.0
+title: "RU-PlumeScan: catalogue of methane anomalies over the West Siberian Plain from TROPOMI/Sentinel-5P, 2019-2025"
+message: "If you use this catalogue or code, please cite both the accompanying paper and this dataset."
+type: dataset
+authors:
+  - given-names: "Oleg"
+    family-names: "Sizov"
+    affiliation: "Oil and Gas Research Institute of the Russian Academy of Sciences (IPNG RAS)"
+version: "1.0.0"
+date-released: "2026-08-09"
+license: CC-BY-4.0
+license-url: "https://creativecommons.org/licenses/by/4.0/"
+keywords:
+  - "TROPOMI"
+  - "Sentinel-5P"
+  - "methane"
+  - "CH4"
+  - "plume detection"
+  - "gas flaring"
+  - "West Siberian Plain"
+  - "Google Earth Engine"
+  - "atmospheric composition"
+  - "remote sensing"
+abstract: >-
+  A catalogue of 122 methane anomalies detected over the West Siberian Plain in
+  TROPOMI/Sentinel-5P L3 XCH4 data for 2019-2025. Detection uses a per-overpass
+  local annulus z-score built on robust statistics (median and median absolute
+  deviation) on an equal-area 5.5 km grid, rather than compositing or an
+  absolute concentration threshold. The area of interest is defined
+  physico-geographically, by the boundary of the West Siberian Plain. Each event
+  carries signal strength, geometry, ERA5 wind conditions, nearest candidate
+  source, artefact classification, full processing provenance, and binary match
+  flags against two independent catalogues. The package includes the catalogue
+  in CSV and GeoJSON, a dictionary of all 59 fields, the methodology
+  description, the source code, and the paper figures. Note that the
+  independent catalogues used for cross-checking are not ground truth: they
+  target gas-field super-emitters and systematically omit flaring, which the
+  package documents explicitly.
+references:
+  - type: article
+    authors:
+      - family-names: "Schuit"
+        given-names: "B. J."
+    title: "Automated detection and monitoring of methane super-emitters using satellite data"
+    journal: "Atmospheric Chemistry and Physics"
+    year: 2023
+    doi: "10.5194/acp-23-9071-2023"
+    notes: "Independent catalogue used for cross-checking (Tier 1), CC BY 4.0"
+  - type: database
+    authors:
+      - name: "United Nations Environment Programme, International Methane Emissions Observatory"
+    title: "Methane Alert and Response System (MARS)"
+    url: "https://methanedata.unep.org"
+    year: 2026
+    notes: "Independent catalogue used for cross-checking (Tier 2), CC BY-NC-SA 4.0, retrieved 2026-05-15, not redistributed here"
+  - type: data
+    authors:
+      - name: "Copernicus / European Space Agency"
+    title: "Sentinel-5P TROPOMI L3 CH4"
+    url: "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_OFFL_L3_CH4"
+    year: 2025
+    notes: "Source measurements"
+  - type: data
+    authors:
+      - name: "ECMWF / Copernicus Climate Change Service"
+    title: "ERA5 hourly reanalysis"
+    year: 2025
+    notes: "Wind fields used for plume-axis consistency checks"

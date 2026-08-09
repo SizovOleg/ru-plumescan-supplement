@@ -1,0 +1,57 @@
+MIT License
+
+Copyright (c) 2026 Oleg Sizov / Институт проблем нефти и газа РАН (IPNG RAS)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Data Licensing
+
+The MIT License above applies to the **source code** of RU-PlumeScan
+(everything under `src/` and the architectural Markdown documents at the
+repository root).
+
+Reference and ingested datasets bundled with this repository (under
+`data/`) and Earth Engine Assets published by the project carry their own
+licenses inherited from upstream sources. Each Feature in the published
+Assets includes `data_license` and `data_attribution` properties; the
+canonical mapping is:
+
+| Source / dataset                              | License          | Attribution required |
+|-----------------------------------------------|------------------|----------------------|
+| OpenStreetMap-derived polygons & points        | ODbL-1.0         | "© OpenStreetMap contributors" |
+| Global Power Plant Database (WRI)              | CC-BY-4.0        | "Global Power Plant Database, World Resources Institute" |
+| World Database on Protected Areas (WDPA)       | CC-BY-NC-SA-4.0  | "UNEP-WCMC and IUCN, Protected Planet" (non-commercial use) |
+| VIIRS DNB monthly composites (NOAA)            | Public domain    | "NOAA / NASA / USGS, VIIRS DNB MONTHLY VCMSLCFG" |
+| Researcher-contributed CRITICAL ANCHORS        | Public domain    | "Sizov O. (IPNG RAS), RU-PlumeScan project" |
+| TROPOMI / Sentinel-5P L3 (ESA / Copernicus)    | Copernicus       | "Copernicus Sentinel-5P data, processed by ESA / Sentinel Hub" |
+| Schuit et al. 2023 plume catalog (Zenodo)      | CC-BY-4.0        | "Schuit et al. 2023, doi:10.5281/zenodo.8087134" |
+| UNEP IMEO MARS                                 | CC-BY-NC-SA-4.0  | "UNEP International Methane Emissions Observatory" |
+| CAMS Methane Hotspot Explorer (Copernicus)     | Copernicus       | "Copernicus Atmosphere Monitoring Service (CAMS)" |
+
+Catalog products published by the project itself (Plume Event Catalogs,
+Persistence Maps, Time Series, Reference Baselines) are released under
+**CC-BY-4.0**. Cross-attribution rules: when these products are derived in
+part from a non-commercial-only upstream source (WDPA, IMEO MARS), the
+non-commercial restriction propagates to the derived product per the
+ShareAlike clause; consumers must respect upstream licenses.
+
+Per-Feature license metadata is the canonical source of truth and supersedes
+this table when they disagree.

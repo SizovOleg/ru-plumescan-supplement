@@ -1,0 +1,574 @@
+{
+  "n_events": 122,
+  "years": [
+    "2019",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+  ],
+  "geometry_types": [
+    "MultiPolygon",
+    "Polygon"
+  ],
+  "columns": [
+    "event_id",
+    "datetime_utc",
+    "date_utc",
+    "year",
+    "month",
+    "centroid_lon",
+    "centroid_lat",
+    "area_km2",
+    "n_pixels",
+    "max_z",
+    "mean_z",
+    "max_delta",
+    "mean_delta",
+    "artifact_likely",
+    "corr_albedo",
+    "nearest_source_type",
+    "nearest_source_distance_km",
+    "matched_schuit_150km",
+    "matched_mars_150km",
+    "algorithm_version",
+    "config_id",
+    "params_hash",
+    "run_id",
+    "aoi_boundary",
+    "artifact_likely_albedo_positive",
+    "build_date",
+    "cluster_id",
+    "cluster_overlap_snow_fraction",
+    "count",
+    "enrichment_method",
+    "enrichment_stage",
+    "event_class",
+    "inside_reference_clean_zone",
+    "intermediate_asset",
+    "nearest_source_id",
+    "orbit_date_millis",
+    "plume_axis_deg",
+    "qa_flags",
+    "rna_version",
+    "stage_2_run_date",
+    "stage_3_match_radius_km",
+    "stage_3_run_date",
+    "stage_3b_rescope_date",
+    "surface_confounded_dark",
+    "td0044_reclassified",
+    "wind_alignment_score",
+    "wind_consistency_diff_deg",
+    "wind_consistent",
+    "wind_dir_deg",
+    "wind_level",
+    "wind_levels_inconsistent_qa",
+    "wind_source",
+    "wind_speed",
+    "wind_state",
+    "wind_u",
+    "wind_u_850hPa",
+    "wind_v",
+    "wind_v_850hPa",
+    "zone_boundary_step_ppb"
+  ],
+  "fields": {
+    "algorithm_version": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "2.3.2",
+        "3.1.4"
+      ]
+    },
+    "aoi_boundary": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "zapsib"
+      ]
+    },
+    "area_km2": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 243.07438672618025,
+      "max": 3264.017928640333
+    },
+    "artifact_likely": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "artifact_likely_albedo_positive": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "build_date": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-23"
+      ]
+    },
+    "centroid_lat": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 54.05886162852584,
+      "max": 71.76671384934058
+    },
+    "centroid_lon": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 61.95675590415663,
+      "max": 82.82463143300845
+    },
+    "cluster_id": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 1172526071899,
+      "max": 2130303779080
+    },
+    "cluster_overlap_snow_fraction": {
+      "python_type": [
+        "float",
+        "int"
+      ],
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "config_id": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "default_combine"
+      ]
+    },
+    "corr_albedo": {
+      "python_type": [
+        "float",
+        "int"
+      ],
+      "present": 122,
+      "missing": 0,
+      "min": -0.8729499442727283,
+      "max": 0.9497080831733978
+    },
+    "count": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 5,
+      "max": 67
+    },
+    "enrichment_method": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "numpy_eigh_with_cos_lat"
+      ]
+    },
+    "enrichment_stage": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "axis_v1"
+      ]
+    },
+    "event_class": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "CH4_only",
+        "diffuse_CH4",
+        "wind_ambiguous"
+      ]
+    },
+    "inside_reference_clean_zone": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "intermediate_asset": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2019_intermediate",
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2020_intermediate",
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2021_intermediate",
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2022_intermediate",
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2023_intermediate",
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2024_intermediate",
+        "projects/nodal-thunder-481307-u1/assets/RuPlumeScan/catalog/CH4/events_2025_intermediate"
+      ]
+    },
+    "matched_mars_150km": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "matched_schuit_150km": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "max_delta": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 4.577048751971006,
+      "max": 518.5396517173658
+    },
+    "max_z": {
+      "python_type": [
+        "float",
+        "int"
+      ],
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 85.46876989389955
+    },
+    "mean_delta": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 1.1601968474789348,
+      "max": 164.6345897918836
+    },
+    "mean_z": {
+      "python_type": [
+        "float",
+        "int"
+      ],
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 38.07521307225173
+    },
+    "month": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 3,
+      "max": 10
+    },
+    "n_pixels": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 5,
+      "max": 67
+    },
+    "nearest_source_distance_km": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 1.1158209580132963,
+      "max": 49.242724028486535
+    },
+    "nearest_source_id": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_count": 81,
+      "examples": [
+        "gppd_WRI1003839",
+        "manual_p_01_0d_kruzenshternskoye",
+        "manual_p_01_0d_novoportovskoye"
+      ]
+    },
+    "nearest_source_type": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "gas_field",
+        "tpp_gres",
+        "viirs_flare_high",
+        "viirs_flare_low"
+      ]
+    },
+    "orbit_date_millis": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 1552629588000,
+      "max": 1758266419000
+    },
+    "params_hash": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "04d66637e0305e40e7ca473e451525062769524f147cfd2648490b698688f8bf",
+        "19aa2a9b479246bdd0330cb38d725e695b098160d736290942f9a5f12569a2c8",
+        "1d909d3a2b8d4c422affaf6f4b3a8cc878fe24201803592a5c6322488bfd25ba",
+        "4ace2be260ce67383dfa5792df09e077534fab0f6532f2b15f8cd397e72b8485",
+        "5848063735cfe708308a6d70be6c07a758abc5a37d945b71e43ac68520b85b19",
+        "d98a789c5e179d12e49e7df613db1b9655a8203f84fa7900a8de69ead5947285",
+        "e28cf8046aba243c45f89c7b47a89288d0e9e597bba906d5566f9b726bcbf4b3"
+      ]
+    },
+    "plume_axis_deg": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 0.5605329765727415,
+      "max": 179.99999999999102
+    },
+    "qa_flags": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "",
+        "zone_boundary_adjustment_applied"
+      ]
+    },
+    "rna_version": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "1.2"
+      ]
+    },
+    "run_id": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "default_combine_2019_combined_d98a789c",
+        "default_combine_2020_combined_4ace2be2",
+        "default_combine_2021_combined_1d909d3a",
+        "default_combine_2022_combined_04d66637",
+        "default_combine_2023_combined_e28cf804",
+        "default_combine_2024_combined_19aa2a9b",
+        "default_combine_2025_combined_58480637"
+      ]
+    },
+    "stage_2_run_date": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "2026-05-14T03:57:50.383568+00:00",
+        "2026-05-14T22:19:44.001182+00:00",
+        "2026-05-23T02:59:45.045830+00:00",
+        "2026-05-23T02:59:55.375818+00:00",
+        "2026-05-23T03:00:03.495554+00:00",
+        "2026-05-23T03:00:11.463093+00:00",
+        "2026-05-23T03:00:25.260694+00:00"
+      ]
+    },
+    "stage_3_match_radius_km": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 150,
+      "max": 150
+    },
+    "stage_3_run_date": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "2026-05-23"
+      ]
+    },
+    "stage_3b_rescope_date": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "2026-06-20"
+      ]
+    },
+    "surface_confounded_dark": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "wind_alignment_score": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 0.0008242436968670663,
+      "max": 0.9916269435152217
+    },
+    "wind_consistency_diff_deg": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 1.3839675316413604,
+      "max": 160.03784467849977
+    },
+    "wind_consistent": {
+      "python_type": "int",
+      "present": 113,
+      "missing": 9,
+      "min": 0,
+      "max": 1
+    },
+    "wind_dir_deg": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 4.0076999523522545,
+      "max": 350.7719954929946
+    },
+    "wind_level": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "10m"
+      ]
+    },
+    "wind_levels_inconsistent_qa": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 0,
+      "max": 1
+    },
+    "wind_source": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "ERA5_HOURLY_10m"
+      ]
+    },
+    "wind_speed": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": 0.15364335717626623,
+      "max": 12.513316642191269
+    },
+    "wind_state": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "aligned",
+        "insufficient_wind",
+        "misaligned"
+      ]
+    },
+    "wind_u": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": -7.420664310455322,
+      "max": 10.345126152038574
+    },
+    "wind_u_850hPa": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": -9.920708656311035,
+      "max": 17.298477172851562
+    },
+    "wind_v": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": -12.364208221435547,
+      "max": 7.615008354187012
+    },
+    "wind_v_850hPa": {
+      "python_type": "float",
+      "present": 122,
+      "missing": 0,
+      "min": -18.262971878051758,
+      "max": 14.784097671508789
+    },
+    "year": {
+      "python_type": "int",
+      "present": 122,
+      "missing": 0,
+      "min": 2019,
+      "max": 2025
+    },
+    "zone_boundary_step_ppb": {
+      "python_type": "int",
+      "present": 33,
+      "missing": 89,
+      "min": 16,
+      "max": 16
+    },
+    "datetime_utc": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_count": 59,
+      "examples": [
+        "2019-03-15T05:59:48Z",
+        "2019-05-09T07:15:09Z",
+        "2019-06-23T06:32:00Z"
+      ]
+    },
+    "date_utc": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_count": 55,
+      "examples": [
+        "2019-03-15",
+        "2019-05-09",
+        "2019-06-23"
+      ]
+    },
+    "event_id": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_count": 122,
+      "examples": [
+        "CH4-WSP-001",
+        "CH4-WSP-002",
+        "CH4-WSP-003"
+      ]
+    },
+    "td0044_reclassified": {
+      "python_type": "int",
+      "present": 39,
+      "missing": 83,
+      "min": 1,
+      "max": 1
+    }
+  }
+}
