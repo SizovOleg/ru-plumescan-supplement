@@ -25,6 +25,8 @@ The L3 product grid has a 1113.2 m step; all analysis is performed on an equal-a
 
 **Area of interest** — the West Siberian Plain within its physico-geographic boundary: a composite polygon of 8 parts, 45,386 vertices, covering 2.90 million km². This is 58.5% of the 60–95°E × 50–75°N bounding box used at earlier stages of the work.
 
+The outline was digitised manually by the author from a digital elevation model, guided by the boundaries given in the *Atlas of Tyumen Oblast* (1971) and other cartographic atlases. The vector layer is published alongside the catalogue (`data/zapsib_boundary.geojson`), so the area is reproducible exactly, without re-digitisation.
+
 **Period** — 2019–2025, March through October. Winter months are excluded by an objective constraint: XCH₄ retrieval is unavailable at high latitudes under low sun and persistent snow cover.
 
 ---
@@ -97,6 +99,8 @@ where `corr_albedo` is the correlation between the XCH₄ enhancement and albedo
 The converse case, `corr_albedo ≤ −0.5`, is flagged as `surface_confounded_dark` — an **annotation, not a rejection**: the event stays in the catalogue.
 
 Result: **88 valid, 34 likely artefacts** out of 122.
+
+The rule was applied uniformly across all years. Some records carry a stale algorithm-version label, but a per-event check confirms the processing is uniform: the earlier, symmetric form of the rule (`|corr_albedo| ≥ 0.5`) would have produced 47 artefacts, whereas 34 are observed — exactly what the directional form yields.
 
 ---
 

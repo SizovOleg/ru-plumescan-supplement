@@ -27,7 +27,10 @@ abstract: >-
   local annulus z-score built on robust statistics (median and median absolute
   deviation) on an equal-area 5.5 km grid, rather than compositing or an
   absolute concentration threshold. The area of interest is defined
-  physico-geographically, by the boundary of the West Siberian Plain. Each event
+  physico-geographically, by the boundary of the West Siberian Plain — the
+  authors' own manual delineation, digitised from a digital elevation model with
+  reference to the Atlas of Tyumen Oblast (1971) and other cartographic atlases,
+  and published with the catalogue. Each event
   carries signal strength, geometry, ERA5 wind conditions, nearest candidate
   source, artefact classification, full processing provenance, and binary match
   flags against two independent catalogues. The package includes the catalogue

@@ -4,7 +4,7 @@
 
 All raster figures are 300 dpi. Files suffixed `_2100w` are sized for full page width, `_1015w` for a single column. Vector versions (`.svg`) are available where the figure is drawn entirely in matplotlib.
 
-The terrain backdrop is MERIT DEM. The outline marks the physico-geographic boundary of the West Siberian Plain.
+The terrain backdrop is MERIT DEM. The outline marks the physico-geographic boundary of the West Siberian Plain, manually digitised by the author from a digital elevation model, guided by boundaries in the Atlas of Tyumen Oblast (1971) and other cartographic atlases.
 
 Note: figure files are named with Cyrillic-transliterated prefixes `R1`–`R3` for the supporting figures and `F5`–`F9` for the main-text figures, matching the paper's numbering.
 
@@ -14,7 +14,7 @@ Note: figure files are named with Cyrillic-transliterated prefixes `R1`–`R3` f
 
 **File:** `R1_study_area_300dpi_2100w.png`
 
-The West Siberian Plain within its physico-geographic boundary over terrain. The inset shows the position of the region in northern Eurasia. The area covers 2.90 million km².
+The West Siberian Plain within its physico-geographic boundary over terrain. The inset shows the position of the region in northern Eurasia. The area covers 2.90 million km². The boundary was manually digitised by the author from a digital elevation model, guided by the Atlas of Tyumen Oblast (1971) and other cartographic atlases; the vector layer is published as `data/zapsib_boundary.geojson`.
 
 ---
 

@@ -23,8 +23,15 @@ Full licence text: https://creativecommons.org/licenses/by/4.0/legalcode
 SCOPE AND THIRD-PARTY MATERIAL
 --------------------------------------------------------------------------------
 
-This licence covers the catalogue produced by this project. It does NOT extend
-to third-party datasets used as inputs, which retain their own terms:
+This licence covers the catalogue produced by this project, including the West
+Siberian Plain boundary layer (`data/zapsib_boundary.geojson`). That layer is
+the authors' own work — manually digitised by the author from a digital
+elevation model, guided by the physico-geographic boundaries given in the Atlas
+of Tyumen Oblast (1971) and other cartographic atlases — and is therefore
+granted under these CC BY 4.0 terms, not under any third-party licence.
+
+This licence does NOT extend to third-party datasets used as inputs, which
+retain their own terms:
 
   - TROPOMI/Sentinel-5P (Copernicus) — Copernicus Open Licence
   - ERA5 (ECMWF / Copernicus Climate Change Service) — Copernicus Open Licence

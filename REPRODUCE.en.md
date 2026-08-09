@@ -114,7 +114,15 @@ To run your own copy, copy the modules into your own Earth Engine repository and
 
 ## 7. Integrity check
 
-A quick check that the published data agrees with the reported numbers:
+A full check in one command — 20 assertions covering the reported numbers, uniform application of the artefact rule across all years, adherence to the detection thresholds, and the bounded reach of the known defect.
+
+```bash
+python code/py/supplement/verify_catalog.py --data data
+```
+
+No Earth Engine access is needed — it checks the published CSV. Exit code 0 means no disagreements.
+
+A minimal manual check:
 
 ```python
 import pandas as pd

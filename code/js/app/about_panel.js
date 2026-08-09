@@ -187,6 +187,11 @@ exports.build = function() {
     '(Caspian, steppe, Urals) are excluded.',
     theme.STYLE.caption
   ));
+  refCard.add(ui.Label(
+    'The boundary was digitised manually by the author from elevation data, ' +
+    'guided by published physico-geographic atlases (Atlas of Tyumen Oblast, 1971).',
+    theme.STYLE.caption
+  ));
   panel.add(refCard);
 
   return panel;
