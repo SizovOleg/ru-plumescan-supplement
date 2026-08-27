@@ -147,9 +147,9 @@ Both catalogues are first clipped by the same physico-geographic boundary so the
 | 2023 | 57.1% (12 of 21) |
 | 2024 | 82.1% (32 of 39) |
 | 2025 | 64.3% (9 of 14) |
-| **2023–2025** | **65.4% (53 of 81)** |
+| **2023–2025** | **71.6% (53 of 74)** |
 
-2022 is excluded: no MARS record falls inside the plain that year, so the metric degenerates.
+2022 is excluded entirely: no MARS record falls inside the plain that year, so the seven 2022 catalogue events are excluded from the combined denominator as well (21 + 39 + 14 = 74). Correction of 2026-08-27: the previously published figure of 65.4% (53 of 81) counted the 2022 events in the denominator despite the declared exclusion.
 
 ### How to read this
 

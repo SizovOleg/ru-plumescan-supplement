@@ -546,7 +546,7 @@ def bake_r3() -> None:
 
     ours, schuit, mars = _load_events()
     t1_events = [e for e in ours if e[0] == "2021"]              # 16
-    t2_events = [e for e in ours if e[0] in ("2022", "2023", "2024", "2025")]  # 81
+    t2_events = [e for e in ours if e[0] in ("2023", "2024", "2025")]  # 74; 2022 исключён из знаменателя (0 MARS в границах равнины) — исправление 2026-08-27, было 81
     print(f"  наши: Tier1 n={len(t1_events)}, Tier2 n={len(t2_events)}; "
           f"Schuit={len(schuit)}, MARS={len(mars)}")
 
@@ -564,10 +564,10 @@ def bake_r3() -> None:
     t2_curve = [100 * sum(1 for d in t2_nn if d is not None and d <= r) / len(t2_nn)
                 for r in radii]
 
-    # Sanity-якоря при 150 км (ожидаем 7/16 и 53/81)
+    # Sanity-якоря при 150 км (ожидаем 7/16 и 53/74; было 53/81 до исправления знаменателя Tier 2)
     n1_150 = sum(1 for d in t1_nn if d is not None and d <= MATCH_KM)
     n2_150 = sum(1 for d in t2_nn if d is not None and d <= MATCH_KM)
-    print(f"  якорь 150 км: Tier1 {n1_150}/16 (ожид. 7), Tier2 {n2_150}/81 (ожид. 53)")
+    print(f"  якорь 150 км: Tier1 {n1_150}/16 (ожид. 7), Tier2 {n2_150}/{len(t2_nn)} (ожид. 53/74)")
     assert n1_150 == 7 and n2_150 == 53, "anchor mismatch vs phase1!"
 
     # Медианные NN-расстояния совпавших пар при 150 км

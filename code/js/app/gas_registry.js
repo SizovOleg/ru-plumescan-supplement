@@ -79,8 +79,8 @@ var GAS_REGISTRY = {
       n_tpp: 1,
       tier1_precision: 0.438,
       tier1_recall: 0.469,
-      tier2_combined_precision: 0.654,
-      note: 'AOI = zapsib. Tier 1 PASS (43.8%/46.9%). Tier 2 PASS combined 2023-2025 (65.4%); 2022 excluded (0 MARS inside boundary).'
+      tier2_combined_precision: 0.716,
+      note: 'AOI = zapsib. Tier 1 PASS (43.8%/46.9%). Tier 2 PASS combined 2023-2025 (71.6%, 53/74); 2022 excluded from denominator (0 MARS inside boundary). Corrected 2026-08-27 from 65.4% (53/81).'
     },
     // Годовая разбивка для интерактивного графика (valid / artifact)
     per_year_stats: {
