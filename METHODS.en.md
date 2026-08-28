@@ -111,10 +111,12 @@ A five-level priority cascade:
 | Priority | Condition | Category |
 |---|---|---|
 | 1 | inside a zone free of known sources | `diffuse_CH4` |
-| 2 | wetland heuristic: ≥ 3 of 4 conditions met | `diffuse_CH4` |
+| 2 | wetland heuristic: ≥ 3 of 4 conditions met¹ | `diffuse_CH4` |
 | 3 | wind levels disagree | `wind_ambiguous` |
 | 4 | a nearest industrial source is found | `CH4_only` |
 | 5 | otherwise | `wind_ambiguous` |
+
+¹ The four conditions are: area above 1000 km²; low cluster compactness; months June–September; no industrial source within 100 km. The compactness threshold has not been calibrated empirically, so in the applied configuration that condition is always false and the remaining three must all hold — making the diffuse classification deliberately conservative.
 
 Observed distribution: `wind_ambiguous` — 78, `CH4_only` — 43, `diffuse_CH4` — 1.
 

@@ -34,8 +34,20 @@ CAT = f"{ROOT}/catalog/CH4"
 REFS = f"{ROOT}/refs"
 YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"]
 
-REPO = Path(__file__).resolve().parents[3]
-OUT_DIR = REPO / "docs" / "figures"
+import pathlib
+def _layout() -> tuple:
+    """Каталоги вывода и данных для двух раскладок репозитория.
+
+    Рабочий репозиторий: docs/figures, supplement/data, docs.
+    Опубликованный supplement: figures, data, data.
+    """
+    root = pathlib.Path(__file__).resolve().parents[3]
+    if (root / "supplement").is_dir():
+        return root / "docs" / "figures", root / "supplement" / "data", root / "docs"
+    return root / "figures", root / "data", root / "data"
+
+
+OUT_DIR, DATA_DIR, AUX_DIR = _layout()
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 ZAPSIB_FC = ee.FeatureCollection(f"projects/{PID}/assets/zapsib")
@@ -286,7 +298,7 @@ def bake_f7() -> None:
     marks = []
     if feats:
         g = feats[0]["geometry"]["coordinates"]
-        marks = [(g[0], g[1], "Детекция Schuit, 9 км", 45, 55)]
+        marks = [(g[0], g[1], "Детекция Schuit, 15 км", 45, 55)]
     post_process(p_b, (66.5, 75.5, 69.0, 72.0), marks=marks,
                  texts=[(0.015, 0.06, "б) Бованенково", 11)])
 
@@ -350,9 +362,9 @@ def bake_f6() -> None:
     artifact = [per_year[y]["artifact"] for y in YEARS]
     z5 = [per_year[y]["z5"] for y in YEARS]
 
-    fig, (ax1, ax2) = plt.subplots(
-        2, 1, figsize=(7.0, 6.2), dpi=300,
-        gridspec_kw={"height_ratios": [2.4, 1.0], "hspace": 0.5})
+    # Одна панель: сопоставление с ранней версией конвейера убрано —
+    # в тексте статьи оно не обсуждается (решение автора 2026-08-28)
+    fig, ax1 = plt.subplots(figsize=(7.0, 4.2), dpi=300)
 
     x = range(len(YEARS))
     ax1.bar(x, valid, color="#2E7D32", label="Достоверные",
@@ -370,20 +382,9 @@ def bake_f6() -> None:
     ax1.legend(loc="upper left", fontsize=8, frameon=False)
     ax1.spines[["top", "right"]].set_visible(False)
 
-    methods = ["Ранняя версия", "Настоящая методика"]
-    counts = [2811, 39]
-    bars = ax2.barh(methods, counts, color=["#9e9e9e", "#B45309"],
-                    edgecolor="white")
-    ax2.set_xscale("log")
-    ax2.set_xlabel("Число детекций, 2024 г. (лог. шкала)", fontsize=8)
-    ax2.bar_label(bars, labels=["2811", "39  (согласованность 97,4 %)"],
-                  fontsize=8, padding=3)
-    ax2.set_xlim(1, 30000)
-    ax2.spines[["top", "right"]].set_visible(False)
-    ax2.tick_params(labelsize=8)
 
     for ext in ("svg", "png"):
-        out = OUT_DIR / f"F6_per_year_counts_300dpi.{ext}"
+        out = OUT_DIR / f"fig3_per_year_counts_300dpi.{ext}"
         fig.savefig(out, bbox_inches="tight", dpi=300)
         print(f"  {out.name}: {out.stat().st_size//1024} KB")
     plt.close(fig)
@@ -584,7 +585,7 @@ def bake_r3() -> None:
         "tier1_matched_pct": [round(v, 1) for v in t1_curve],
         "tier2_matched_pct": [round(v, 1) for v in t2_curve],
         "tier1_n": len(t1_events), "tier2_n": len(t2_events),
-        "anchor_150km": {"tier1": f"{n1_150}/16", "tier2": f"{n2_150}/81"},
+        "anchor_150km": {"tier1": f"{n1_150}/16", "tier2": f"{n2_150}/{len(t2_nn)}"},
         "median_nn_matched_150km": {
             "tier1_km": round(med1, 1), "tier1_pairs": len(m1),
             "tier2_km": round(med2, 1), "tier2_pairs": len(m2),
@@ -593,30 +594,51 @@ def bake_r3() -> None:
         "note": "zapsib-clipped data (122 catalog / 32 Schuit / 163 MARS); "
                 "replaces bbox-era 138 km",
     }
-    jpath = REPO / "docs" / "p_02_0d_match_curves.json"
+    jpath = AUX_DIR / "p_02_0d_match_curves.json"
     with open(jpath, "w", encoding="utf-8") as fh:
         json.dump(out_json, fh, indent=2, ensure_ascii=False)
     print(f"  JSON -> {jpath.name}")
 
-    # Фигура: две кривые, вертикаль на 150 км, ч/б-различимо
+    # Нулевая модель случайных совпадений (доля площади равнины в пределах R
+    # от референсов того же года) — считается p_02_0d_null_model.py
+    null_path = AUX_DIR / "p_02_0d_null_model.json"
+    null = None
+    if null_path.exists():
+        with open(null_path, encoding="utf-8") as fh:
+            null = json.load(fh)
+        assert null["radius_km"] == radii, "сетка радиусов нулевой модели не совпадает"
+        i150 = radii.index(MATCH_KM)
+        print(f"  нулевая модель при 150 км: Tier1 {null['tier1_null_pct'][i150]}%, "
+              f"Tier2 {null['tier2_null_pct'][i150]}% "
+              f"(наблюдаемые {t1_curve[i150]:.1f}% и {t2_curve[i150]:.1f}%)")
+    else:
+        print("  ! нулевая модель не найдена — рисунок без неё")
+
+    # Фигура: наблюдаемые кривые + случайное ожидание, вертикаль на 150 км,
+    # ч/б-различимо (разные маркеры и типы линий)
     fig, ax = plt.subplots(figsize=(6.4, 4.4), dpi=300)
     ax.plot(radii, t1_curve, "-o", color="#1a1a1a", ms=4, lw=1.4,
             label=f"Schuit (2021 г.), n = {len(t1_events)}")
     ax.plot(radii, t2_curve, "--s", color="#B45309", ms=4, lw=1.4,
-            label=f"MARS (2022–2025 гг.), n = {len(t2_events)}")
+            label=f"MARS (2023–2025 гг.), n = {len(t2_events)}")
+    if null:
+        ax.plot(radii, null["tier1_null_pct"], "-", color="#9a9a9a", lw=1.0,
+                label="случайное ожидание, Schuit")
+        ax.plot(radii, null["tier2_null_pct"], "--", color="#9a9a9a", lw=1.0,
+                label="случайное ожидание, MARS")
     ax.axvline(MATCH_KM, color="#666666", ls=":", lw=1.2)
-    ax.text(MATCH_KM + 4, 8, "150 км", fontsize=8, color="#444444")
+    ax.text(MATCH_KM + 4, 4, "150 км", fontsize=8, color="#444444")
     ax.set_xlabel("Радиус сопоставления, км", fontsize=9)
-    ax.set_ylabel("Доля совпавших детекций, %", fontsize=9)
+    ax.set_ylabel("Доля совпавших событий, %", fontsize=9)
     ax.set_xlim(0, 310)
     ax.set_ylim(0, 100)
-    ax.legend(fontsize=8, loc="upper left", frameon=False)
+    ax.legend(fontsize=7.5, loc="upper left", frameon=False)
     ax.grid(alpha=0.25, lw=0.4)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(labelsize=8)
 
     for ext in ("svg", "png"):
-        out = OUT_DIR / f"R3_match_curves_300dpi.{ext}"
+        out = OUT_DIR / f"fig4_match_curves_300dpi.{ext}"
         fig.savefig(out, dpi=300, bbox_inches="tight")
         print(f"  {out.name}: {out.stat().st_size//1024} KB")
     plt.close(fig)
@@ -628,7 +650,7 @@ def main() -> int:
     a = ap.parse_args()
     jobs = {"F5": bake_f5, "F6": bake_f6, "F7": bake_f7, "F9": bake_f9,
             "R1": bake_r1, "R2": bake_r2, "R3": bake_r3}
-    todo = [a.only] if a.only else ["F5", "F6", "F7", "F9", "R1", "R2", "R3"]
+    todo = [a.only] if a.only else ["F6", "R3"]   # рисунки 3 и 4 статьи
     for j in todo:
         jobs[j]()
     print(f"\nDone -> {OUT_DIR}")

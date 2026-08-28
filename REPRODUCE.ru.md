@@ -82,11 +82,20 @@ python code/py/supplement/build_data_dictionary.py --data data --out data
 ## 4. Построение рисунков
 
 ```bash
-pip install matplotlib numpy
-python code/py/figures/bake_figures.py
+pip install matplotlib numpy geopandas contextily
+python code/py/figures/bake_pipeline.py       # рис. 1 — структурная схема
+python code/py/figures/prep_map_layers.py     # контекстные слои для рис. 2
+python code/py/figures/bake_map_satellite.py  # рис. 2 — карта каталога
+python code/py/figures/bake_figures.py        # рис. 3 и 4
 ```
 
-Рисунки рендерятся на стороне Earth Engine и сохраняются в разрешении 300 dpi. Подписи — в [`figures/CAPTIONS.ru.md`](figures/CAPTIONS.ru.md).
+Рисунок 1 строится целиком средствами matplotlib и не требует ни учётной записи Earth Engine, ни сети.
+
+Рисунку 2 нужны четыре контекстных слоя в `data/map_layers`. Три из них — границы субъектов и областей (FAO GAUL level1), крупные реки (HydroSHEDS, средний расход выше 250 м³/с) и детекции Schuit et al. (2023) — готовит `prep_map_layers.py`. Четвёртый, выгрузка UNEP IMEO MARS, в репозиторий не включён по условиям лицензии (см. раздел 5) и готовится самостоятельно: точечный GeoJSON в EPSG:4326. Без него скрипт сообщит, какого слоя не хватает. Подложка загружается тайлами Esri World Imagery, поэтому нужна сеть.
+
+Рисунки 3 и 4 используют выборки из ассетов Earth Engine и требуют доступа к ним.
+
+Все выходные файлы сохраняются в разрешении 300 dpi, в растровом и векторном виде, в каталог `figures/`. Подписи — в [`figures/CAPTIONS.ru.md`](figures/CAPTIONS.ru.md).
 
 ---
 

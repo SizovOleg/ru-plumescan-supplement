@@ -5,7 +5,7 @@
  *
  *   1. About / How к use   — что это и как пользоваться
  *   2. Methodology         — Path E v3.1.5 + DNA v2.4 §1.4 validation
- *   3. Paper figures       — F5/F6/F7 thumbnails (or placeholders) + Zenodo
+ *   3. Paper figures       — fig1-fig4 thumbnails (or placeholders) + Zenodo
  *   4. References          — Schuit + MARS citations + licenses
  *
  * @module app/about_panel
@@ -23,24 +23,31 @@ var gas_registry       = require('users/ntcomz18_sand/plumescan:app/gas_registry
 
 var FIGURES = [
   {
-    id: 'F5',
+    id: 'fig1',
+    title: 'Detection method',
+    caption: 'Eight processing steps from TROPOMI L3 XCH4 to the event catalogue.',
+    full_url: 'https://storage.googleapis.com/ruplumescan-figures/fig1_pipeline_300dpi.svg',
+    status: 'pending'
+  },
+  {
+    id: 'fig2',
     title: 'Catalogue map (2019-2025)',
-    caption: 'All 122 detections, coloured by emission source, with reference catalogues.',
-    full_url: 'https://storage.googleapis.com/ruplumescan-figures/F5_spatial_map_300dpi.svg',
+    caption: 'All 122 events against the Schuit et al. (2023) and UNEP IMEO MARS catalogues.',
+    full_url: 'https://storage.googleapis.com/ruplumescan-figures/fig2_catalog_map_300dpi.svg',
     status: 'pending'
   },
   {
-    id: 'F6',
+    id: 'fig3',
     title: 'Detections per year',
-    caption: 'Yearly detection counts, with a 2024 comparison against the earlier method.',
-    full_url: 'https://storage.googleapis.com/ruplumescan-figures/F6_per_year_counts_300dpi.svg',
+    caption: 'Yearly event counts, split into valid events and likely artefacts.',
+    full_url: 'https://storage.googleapis.com/ruplumescan-figures/fig3_per_year_counts_300dpi.svg',
     status: 'pending'
   },
   {
-    id: 'F7',
-    title: 'Regional detail — Khanty-Mansi & Yamal',
-    caption: 'Close-up of the Khanty-Mansi oil region and the Bovanenkovo gas field.',
-    full_url: 'https://storage.googleapis.com/ruplumescan-figures/F7_cluster_zoom_300dpi.svg',
+    id: 'fig4',
+    title: 'Match curves',
+    caption: 'Matched fraction against matching radius, with the random expectation.',
+    full_url: 'https://storage.googleapis.com/ruplumescan-figures/fig4_match_curves_300dpi.svg',
     status: 'pending'
   }
 ];

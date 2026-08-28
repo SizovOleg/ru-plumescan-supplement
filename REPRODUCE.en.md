@@ -82,11 +82,20 @@ The script exits with an error if the dictionary and the data disagree on even o
 ## 4. Generating the figures
 
 ```bash
-pip install matplotlib numpy
-python code/py/figures/bake_figures.py
+pip install matplotlib numpy geopandas contextily
+python code/py/figures/bake_pipeline.py       # figure 1 - method diagram
+python code/py/figures/prep_map_layers.py     # context layers for figure 2
+python code/py/figures/bake_map_satellite.py  # figure 2 - catalogue map
+python code/py/figures/bake_figures.py        # figures 3 and 4
 ```
 
-Figures are rendered server-side by Earth Engine and saved at 300 dpi. Captions are in [`figures/CAPTIONS.en.md`](figures/CAPTIONS.en.md).
+Figure 1 is drawn entirely in matplotlib and needs neither an Earth Engine account nor a network connection.
+
+Figure 2 needs four context layers in `data/map_layers`. Three of them — first-level administrative boundaries (FAO GAUL level1), major rivers (HydroSHEDS, mean discharge above 250 m³/s) and the detections of Schuit et al. (2023) — are produced by `prep_map_layers.py`. The fourth, the UNEP IMEO MARS export, is not included in this repository under the terms of its licence (see section 5) and has to be prepared separately as a point GeoJSON in EPSG:4326. Without it the script reports which layer is missing. The backdrop is fetched as Esri World Imagery tiles, so a network connection is required.
+
+Figures 3 and 4 draw on samples from Earth Engine assets and require access to them.
+
+All outputs are written at 300 dpi in both raster and vector form into `figures/`. Captions are in [`figures/CAPTIONS.en.md`](figures/CAPTIONS.en.md).
 
 ---
 

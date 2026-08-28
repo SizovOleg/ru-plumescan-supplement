@@ -1,0 +1,59 @@
+{
+  "radius_km": [
+    25,
+    50,
+    75,
+    100,
+    125,
+    150,
+    175,
+    200,
+    225,
+    250,
+    275,
+    300
+  ],
+  "tier1_matched_pct": [
+    6.2,
+    12.5,
+    18.8,
+    25.0,
+    37.5,
+    43.8,
+    50.0,
+    68.8,
+    68.8,
+    75.0,
+    93.8,
+    100.0
+  ],
+  "tier2_matched_pct": [
+    10.8,
+    18.9,
+    33.8,
+    54.1,
+    63.5,
+    71.6,
+    74.3,
+    79.7,
+    87.8,
+    89.2,
+    89.2,
+    90.5
+  ],
+  "tier1_n": 16,
+  "tier2_n": 74,
+  "anchor_150km": {
+    "tier1": "7/16",
+    "tier2": "53/74"
+  },
+  "median_nn_matched_150km": {
+    "tier1_km": 86.3,
+    "tier1_pairs": 7,
+    "tier2_km": 76.5,
+    "tier2_pairs": 53,
+    "overall_km": 77.5,
+    "overall_pairs": 60
+  },
+  "note": "zapsib-clipped data (122 catalog / 32 Schuit / 163 MARS); replaces bbox-era 138 km"
+}

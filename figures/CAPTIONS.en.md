@@ -2,64 +2,50 @@
 
 [Русская версия](CAPTIONS.ru.md)
 
-All raster figures are 300 dpi. Files suffixed `_2100w` are sized for full page width, `_1015w` for a single column. Vector versions (`.svg`) are available where the figure is drawn entirely in matplotlib.
+The four figures of the paper. File numbering matches the numbering in the text. Raster versions are 300 dpi; a vector version (`.svg`) is available for all four.
 
-The terrain backdrop is MERIT DEM. The outline marks the physico-geographic boundary of the West Siberian Plain, manually digitised by the author from a digital elevation model, guided by boundaries in the Atlas of Tyumen Oblast (1971) and other cartographic atlases.
-
-Note: figure files are named with Cyrillic-transliterated prefixes `R1`–`R3` for the supporting figures and `F5`–`F9` for the main-text figures, matching the paper's numbering.
+The physico-geographic boundary of the West Siberian Plain was digitised manually by the author from a digital elevation model, guided by boundaries in the Atlas of Tyumen Oblast (1971) and other cartographic atlases; the vector layer is published as `data/zapsib_boundary.geojson`.
 
 ---
 
-## Figure 1 (R1) — Study area
+## Figure 1 — Structure of the detection method
 
-**File:** `R1_study_area_300dpi_2100w.png`
+**Files:** `fig1_pipeline_300dpi.png`, `fig1_pipeline_300dpi.svg`
+**Script:** `code/py/figures/bake_pipeline.py`
 
-The West Siberian Plain within its physico-geographic boundary over terrain. The inset shows the position of the region in northern Eurasia. The area covers 2.90 million km². The boundary was manually digitised by the author from a digital elevation model, guided by the Atlas of Tyumen Oblast (1971) and other cartographic atlases; the vector layer is published as `data/zapsib_boundary.geojson`.
+> Structure of the methane-plume detection method applied to TROPOMI L3 data
 
----
-
-## Figure 2 (R2) — Processing pipeline
-
-**Files:** `R2_pipeline_300dpi.png`, `R2_pipeline_300dpi.svg`
-
-The processing sequence: from the TROPOMI L3 XCH₄ product filtered at `qa_value ≥ 0.5`, through reprojection to an equal-area 5.5 km grid, annulus z-scoring using the median and MAD, clustering at z ≥ 3.0 with at least 5 pixels, two-condition masking, wind checking against ERA5 and the artefact-classification cascade — to the final catalogue of 122 events carrying match flags against the independent catalogues.
+Eight numbered processing steps are grouped into four stages distinguished by fill and frame style: input data, anomaly extraction, checking and attribution, result. The right-hand column of each step gives the adopted thresholds and parameters; the dashed blocks on the right are the auxiliary datasets drawn in. The sequence runs: TROPOMI L3 XCH₄ filtered at `qa_value ≥ 0.5` → reprojection to an equal-area 5.5 km grid (EPSG:6931) → annulus z-scoring on the median and MAD over 50–150 km with at least 50 valid pixels in the ring → clustering at z ≥ 3.0 with at least 5 pixels → wind checking against ERA5 → the MODIS artefact-diagnostic cascade → source attribution from VIIRS Nightfire.
 
 ---
 
-## Figure 3 (R3) — Match curves and median distances
+## Figure 2 — Catalogue events and reference catalogues
 
-**Files:** `R3_match_curves_300dpi.png`, `R3_match_curves_300dpi.svg`
+**Files:** `fig2_catalog_map_300dpi.png`, `fig2_catalog_map_300dpi.svg`
+**Script:** `code/py/figures/bake_map_satellite.py`
 
-The fraction of events with a same-year match as a function of matching radius from 25 to 300 km, shown separately against Schuit et al. (2023) and UNEP IMEO MARS. The vertical line marks the adopted 150 km radius. Median distances to the nearest record of the respective catalogue are given: 86.3 km for Tier 1, 76.5 km for Tier 2, 77.5 km overall.
+> Detected anomalous methane emission events of the West Siberian Plain, 2019–2025, compared against the reference catalogues
 
----
-
-## Figure 5 (F5) — Spatial distribution of the catalogue
-
-**Files:** `F5_spatial_map_300dpi_2100w.png`, `F5_spatial_map_300dpi_1015w.png`
-
-All 122 catalogue events. Marker size scales with the logarithm of the maximum z-score; colour encodes the type of the nearest source. Records of the independent catalogues are shown in grey. The maximum z-score in the catalogue is 85.5.
+Three classes of points: the 122 events of the present catalogue, the detections of Schuit et al. (2023) and the detections of UNEP IMEO MARS. The backdrop is the Esri World Imagery mosaic, over which are drawn the boundaries of the federal subjects of the Russian Federation and the oblasts of the Republic of Kazakhstan, major rivers, cities and the physico-geographic boundary of the plain. The scale bar is corrected for the latitude at the centre of the frame.
 
 ---
 
-## Figure 6 (F6) — Distribution by year
+## Figure 3 — Distribution by year
 
-**Files:** `F6_per_year_counts_300dpi.png`, `F6_per_year_counts_300dpi.svg`
+**Files:** `fig3_per_year_counts_300dpi.png`, `fig3_per_year_counts_300dpi.svg`
+**Script:** `code/py/figures/bake_figures.py --only F6`
 
-Event counts by year, split into valid events and likely artefacts, with events at z > 5 marked separately. The rise toward 2024 reflects a combination of factors, including expanding coverage of the independent catalogues and changing observing conditions, and should not be read as a direct measure of an emission trend.
+> Catalogue event counts by year, split into valid events and likely artefacts
 
----
-
-## Figure 7 (F7) — Regional insets
-
-**Files:** `F7_combined_zoom_300dpi_2100w.png` (both panels), `F7A_KhMAO_zoom_300dpi_1015w.png`, `F7B_Bovanenkovo_zoom_300dpi_1015w.png`
-
-Panel A — Khanty-Mansi Autonomous Okrug, an area dominated by flaring. Panel B — Bovanenkovo, a gas-production area on the Yamal Peninsula. The insets show the relative positions of catalogue events and independent-catalogue records in characteristic industrial districts.
+The number of events at z > 5 is given above each bar. The rise toward 2024 reflects a combination of factors, including expanding coverage of the independent catalogues and changing observing conditions, and should not be read as a direct measure of an emission trend.
 
 ---
 
-## Figure 9 (F9) — Complementary coverage of flares
+## Figure 4 — Match curves
 
-**Files:** `F9_flare_complement_300dpi_2100w.png`, `F9_flare_complement_300dpi_1015w.png`
+**Files:** `fig4_match_curves_300dpi.png`, `fig4_match_curves_300dpi.svg`
+**Script:** `code/py/figures/bake_figures.py --only R3`
 
-The 44 events attributed to flares from VIIRS Nightfire that have no match in either Schuit et al. (2023) or UNEP IMEO MARS within 150 km of the same year. The figure illustrates that non-matching against the independent catalogues is in large part a difference in coverage: both target large gas-field sources and systematically omit flaring.
+> Fraction of matched events as a function of the spatial matching radius: the Schuit catalogue (2021, n = 16) and the MARS system (2023–2025, n = 74). Grey curves — random expectation; the vertical dashed line — the empirically adopted radius of 150 km
+
+The matching radius runs from 25 to 300 km. Random expectation is the fraction of the plain's area within the given radius of at least one same-year reference detection, i.e. the match rate that uniformly random event placement would produce. The 150 km radius is adopted as the point where the excess of the observed rate over random expectation is greatest for Tier 2 (71.6% vs 32.4%). Median distances to the nearest record of the respective catalogue: 86.3 km for Tier 1, 76.5 km for Tier 2, 77.5 km overall.
