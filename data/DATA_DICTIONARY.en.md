@@ -4,7 +4,7 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 
 - **Events in the catalogue:** 122
 - **Geometry type:** MultiPolygon, Polygon
-- **Fields in total:** 59
+- **Fields in total:** 60
 
 ## Identity and time
 
@@ -51,7 +51,7 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 | `qa_flags` | — | text | 122 of 122 | `«»`, `zone_boundary_adjustment_applied` | Quality-control flag string. An empty string means no flags; zone_boundary_adjustment_applied means a background-zone boundary correction was applied. |
 | `zone_boundary_step_ppb` | ppb | integer | 33 of 122 | 16 … 16 | Magnitude of the background step at the zone boundary where the correction was applied. Populated only for records carrying the corresponding qa_flags entry. |
 | `inside_reference_clean_zone` | — | integer | 122 of 122 | 0 … 1 | 1 — the centroid falls inside a zone that independent catalogues treat as free of known sources. |
-| `td0044_reclassified` | — | integer | 39 of 122 | 1 … 1 | 1 — the record was reclassified during the TD-0044 revision under algorithm version 3.1.4. Populated for exactly the 39 records whose algorithm_version is 3.1.4. |
+| `td0044_reclassified` | — | integer | 39 of 122 | 1 … 1 | 1 — the record was reclassified during the TD-0044 revision that introduced the directional corr_albedo rule. Populated for the 39 records rebuilt in that revision (their original algorithm_version_recorded is 3.1.4). |
 
 ## Wind conditions (ERA5)
 
@@ -91,7 +91,8 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 
 | Field | Unit | Type | Filled | Range / values | Description |
 |---|---|---|---|---|---|
-| `algorithm_version` | — | text | 122 of 122 | `2.3.2`, `3.1.4` | Algorithm version label. 83 records carry 2.3.2 and 39 carry 3.1.4. The label is stale: in practice the artefact-classification rule was applied to all 122 events in the directional form of 3.1.4, confirmed by a per-event check with zero disagreements (verify_catalog.py). This field must not be used to select records by processing version. |
+| `algorithm_version` | — | text | 122 of 122 | `3.1.4` | Version of the detection logic the event was produced by. Uniform across all 122 records: the directional form of the corr_albedo rule introduced in version 3.1.4 (TD-0044). The uniform label is stamped at export time after checking that every event carries the markers of that revision (fields artifact_likely_albedo_positive and surface_confounded_dark). The original build label of the export batch is preserved in algorithm_version_recorded. |
+| `algorithm_version_recorded` | — | text | 122 of 122 | `2.3.2`, `3.1.4` | Version label written into the asset when the export batch was built: 2.3.2 for 83 records and 3.1.4 for 39. The yearly collections were rebuilt at different times, so the labels diverged even though the artefact-classification rule was applied identically to every event. The field is kept for traceability; use algorithm_version to select by processing version. |
 | `config_id` | — | text | 122 of 122 | `default_combine` | Named parameter preset for the run. Throughout the catalogue this is default_combine. |
 | `params_hash` | — | text | 122 of 122 | `04d66637e0305e40e7ca473e451525062769524f147cfd2648490b698688f8bf`, `19aa2a9b479246bdd0330cb38d725e695b098160d736290942f9a5f12569a2c8`, `1d909d3a2b8d4c422affaf6f4b3a8cc878fe24201803592a5c6322488bfd25ba`, `4ace2be260ce67383dfa5792df09e077534fab0f6532f2b15f8cd397e72b8485`, `5848063735cfe708308a6d70… | SHA-256 hash of the full run parameter snapshot. An identical hash guarantees identical processing conditions. |
 | `run_id` | — | text | 122 of 122 | `default_combine_2019_combined_d98a789c`, `default_combine_2020_combined_4ace2be2`, `default_combine_2021_combined_1d909d3a`, `default_combine_2022_combined_04d66637`, `default_combine_2023_combined_e28cf804`, `default_combine_2024_combined_19aa2a9b`, `default_combine_2025_combined_58480637` | Run identifier, formatted <config_id>_<year>_combined_<first 8 characters of params_hash>. |

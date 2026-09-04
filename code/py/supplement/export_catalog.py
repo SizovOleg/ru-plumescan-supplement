@@ -30,6 +30,15 @@ ROOT = f"projects/{PID}/assets/RuPlumeScan"
 CAT = f"{ROOT}/catalog/CH4"
 YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"]
 
+# Версия детекционной логики, которой построен весь каталог. В ассетах поле
+# algorithm_version хранит метку сборки экспортной партии, а не версию правила:
+# годовые коллекции пересобирались в разное время, поэтому метки разошлись
+# (2.3.2 у 83 записей, 3.1.4 у 39). Фактическое правило одно для всех 122
+# событий — направленная редакция corr_albedo, введённая в 3.1.4 (TD-0044).
+# Признаки этой редакции проверяются перед перештамповкой, см. normalize_version.
+DETECTION_VERSION = "3.1.4"
+V314_MARKERS = ("artifact_likely_albedo_positive", "surface_confounded_dark")
+
 # Порядок колонок в CSV: идентификация -> геометрия -> сигнал -> источник ->
 # валидация -> происхождение. Поля вне списка добавляются в конец по алфавиту.
 COLUMN_ORDER = [
@@ -54,6 +63,7 @@ COLUMN_ORDER = [
     "matched_schuit_150km",
     "matched_mars_150km",
     "algorithm_version",
+    "algorithm_version_recorded",
     "config_id",
     "params_hash",
     "run_id",
@@ -89,6 +99,26 @@ def add_derived_fields(rows: List[Dict[str, Any]]) -> None:
             row["datetime_utc"] = None
             row["date_utc"] = None
         row["event_id"] = "CH4-WSP-{:03d}".format(idx)
+
+
+def normalize_version(rows: List[Dict[str, Any]]) -> None:
+    """Привести algorithm_version к единой версии детекционной логики.
+
+    Исходная метка сборки сохраняется в algorithm_version_recorded, чтобы
+    происхождение записи не терялось. Перештамповка выполняется только после
+    проверки, что у каждого события есть признаки редакции 3.1.4: иначе
+    единая метка была бы утверждением, не подкреплённым данными.
+    """
+    missing = [r.get("event_id") for r in rows
+               if any(r.get(m) is None for m in V314_MARKERS)]
+    if missing:
+        raise ValueError(
+            f"признаки редакции {DETECTION_VERSION} отсутствуют у "
+            f"{len(missing)} событий ({', '.join(str(m) for m in missing[:5])}) — "
+            "единая метка версии неприменима")
+    for row in rows:
+        row["algorithm_version_recorded"] = row.get("algorithm_version")
+        row["algorithm_version"] = DETECTION_VERSION
 
 
 def collect_schema(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -157,6 +187,7 @@ def main() -> None:
     # rows — те же объекты properties, что и внутри features, поэтому
     # производные поля попадают и в CSV, и в GeoJSON
     add_derived_fields(rows)
+    normalize_version(rows)
 
     # --- CSV ---------------------------------------------------------------
     present_keys: List[str] = []

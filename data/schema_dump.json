@@ -34,6 +34,7 @@
     "matched_schuit_150km",
     "matched_mars_150km",
     "algorithm_version",
+    "algorithm_version_recorded",
     "config_id",
     "params_hash",
     "run_id",
@@ -80,7 +81,6 @@
       "present": 122,
       "missing": 0,
       "distinct_values": [
-        "2.3.2",
         "3.1.4"
       ]
     },
@@ -561,6 +561,15 @@
         "CH4-WSP-001",
         "CH4-WSP-002",
         "CH4-WSP-003"
+      ]
+    },
+    "algorithm_version_recorded": {
+      "python_type": "str",
+      "present": 122,
+      "missing": 0,
+      "distinct_values": [
+        "2.3.2",
+        "3.1.4"
       ]
     },
     "td0044_reclassified": {
