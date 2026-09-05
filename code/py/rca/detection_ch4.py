@@ -59,6 +59,14 @@ import numpy as np
 # ---------------------------------------------------------------------------
 
 ANALYSIS_SCALE_M = 7000  # TROPOMI L3 grid
+
+# Эталон фона (Algorithm v3.2.0 §3.6.2) — параметр конфигурации, не версия.
+#   industrial_buffers — медиана/MAD кольца по пикселям буферных зон инфраструктуры;
+#                        центральный пиксель обязан лежать в буфере (опубликованный каталог)
+#   regional_clean     — по чистым пикселям; кандидаты ограничиваются явным фильтром
+ANNULUS_REFERENCE_INDUSTRIAL = "industrial_buffers"
+ANNULUS_REFERENCE_CLEAN = "regional_clean"
+ANNULUS_REFERENCES = (ANNULUS_REFERENCE_INDUSTRIAL, ANNULUS_REFERENCE_CLEAN)
 SIGMA_FLOOR_PPB = 15.0  # CH4 noise floor (Algorithm §3.5)
 
 # Annulus parameters (Algorithm §3.6)
@@ -90,6 +98,7 @@ def apply_two_condition_mask(
     orbit_image: ee.Image,
     industrial_mask: ee.Image,
     target_band: str = "CH4_column_volume_mixing_ratio_dry_air_bias_corrected",
+    annulus_reference: str = ANNULUS_REFERENCE_INDUSTRIAL,
 ) -> ee.Image:
     """
     Algorithm v3.0.3 §3.6: two-condition pixel mask (Path E B2 industrial-only).
@@ -99,7 +108,9 @@ def apply_two_condition_mask(
 
     Conditions:
         1. orbit_image имеет valid CH₄ retrieval (TROPOMI native QA via .mask())
-        2. pixel НЕ industrial (industrial_mask = 0)
+        2. pixel входит в выборку кольца по эталону `annulus_reference`
+           (industrial_buffers: пиксель внутри буфера инфраструктуры, значение 0;
+            regional_clean: чистый пиксель, значение 1)
 
     Path E B2 scope decision (Шаг 5z escalation, GPT reviews #1+#2):
         * Wetland mask deferred к v1.1 (TD-0038). Methodologically awkward на L3:
@@ -114,7 +125,9 @@ def apply_two_condition_mask(
     Args:
         orbit_image: single TROPOMI L3 orbit, post-QA filtering. Must have band
             `target_band`.
-        industrial_mask: ee.Image binary (1 = industrial, 0 = clean) — see
+        industrial_mask: ee.Image binary (1 = clean, 0 = industrial-buffered),
+            полярность ассета proxy_mask_buffered_per_type — see
+        annulus_reference: эталон фона, см. ANNULUS_REFERENCES (Algorithm §3.6.2) — see
             Algorithm v3.0+ §3.6.4 для per-source-type buffer construction
             (TD-0027 P-01.0d, RuPlumeScan/industrial/proxy_mask_buffered_per_type).
         target_band: CH₄ band name (default operational).
@@ -136,8 +149,19 @@ def apply_two_condition_mask(
     # .mask() returns 1 где pixel имеет valid value, 0 где masked
     valid_retrieval = orbit_image.select(target_band).mask()
 
-    # Condition 2: pixel NOT industrial
-    non_industrial = industrial_mask.eq(0)
+    # Condition 2: состав кольца по эталону. Ассет proxy_mask_buffered_per_type
+    # кодирует ЕДИНИЦЕЙ чистый пиксель (`value_1_meaning = "clean"`, строится
+    # как industrial.Not()); НУЛЬ — внутри буфера объекта инфраструктуры.
+    #   industrial_buffers -> .eq(0): кольцо из промышленных пикселей (опубликованный каталог)
+    #   regional_clean     -> .eq(1): кольцо из чистых пикселей
+    # История и замеры: docs/FINDING_mask_polarity.md, docs/DECISION_background_reference.md
+    if annulus_reference == ANNULUS_REFERENCE_INDUSTRIAL:
+        ring_pixels = industrial_mask.eq(0)
+    elif annulus_reference == ANNULUS_REFERENCE_CLEAN:
+        ring_pixels = industrial_mask.eq(1)
+    else:
+        raise ValueError(f"annulus_reference: ожидается одно из {ANNULUS_REFERENCES}, получено {annulus_reference!r}")
+    non_industrial = ring_pixels
 
     # Both conditions must be true for inclusion в annulus stats
     return valid_retrieval.And(non_industrial).rename("two_condition_mask")
@@ -468,6 +492,44 @@ def validate_wind(
 # ---------------------------------------------------------------------------
 # Primitive 6: source attribution (50 km radius + type ranking)
 # ---------------------------------------------------------------------------
+
+
+def filter_candidates_to_buffers(
+    cluster_fc: ee.FeatureCollection,
+    industrial_mask: ee.Image,
+    scale_m: float = 5500.0,
+) -> ee.FeatureCollection:
+    """Algorithm v3.2.0 §3.6.6: оставить кандидатов внутри промышленных буферов.
+
+    До v3.2.0 это ограничение возникало побочным эффектом: маска кольца
+    одновременно маскировала выход `compute_z_local`, поэтому z существовала
+    только внутри буферов. После приведения маски к её назначению (ограничивать
+    выборку кольца, но не отбор кандидатов) ограничение нужно задавать явно —
+    так, как оно и описано в §3.6.6 и в статье: событие принимается, если его
+    центроид лежит в буферной зоне объекта инфраструктуры.
+
+    Args:
+        cluster_fc: коллекция кандидатов с геометрией
+        industrial_mask: ассет proxy_mask_buffered_per_type (1 = чисто,
+            0 = внутри буфера промышленного объекта)
+        scale_m: масштаб опроса маски
+
+    Returns:
+        подмножество cluster_fc с признаком `inside_industrial_buffer` = 1
+    """
+    def _flag(feat: ee.Feature) -> ee.Feature:
+        centroid = feat.geometry().centroid(maxError=1)
+        val = industrial_mask.reduceRegion(
+            reducer=ee.Reducer.first(), geometry=centroid, scale=scale_m
+        ).values().get(0)
+        # Ноль в маске означает «внутри буфера», поэтому проверять val на
+        # истинность нельзя: ee.Algorithms.If(0, ...) уходит в ложную ветку.
+        # Сравниваем с None явно; вне покрытия ассета кандидат не принимается.
+        inside = ee.Algorithms.If(
+            ee.Algorithms.IsEqual(val, None), 0, ee.Number(val).eq(0))
+        return feat.set("inside_industrial_buffer", ee.Number(inside))
+
+    return cluster_fc.map(_flag).filter(ee.Filter.eq("inside_industrial_buffer", 1))
 
 
 def attribute_source(
@@ -996,6 +1058,7 @@ def compute_z_local_numpy(
     proxy_mask: np.ndarray,
     annulus_weights: np.ndarray,
     min_annulus_count: int = MIN_ANNULUS_COUNT_DEFAULT,
+    annulus_only: bool = False,
 ) -> np.ndarray:
     """
     Pure-numpy compute_z_local — testable без EE Initialize.
@@ -1058,6 +1121,8 @@ def compute_z_local_numpy(
 
     for i in range(H):
         for j in range(W):
+            if not annulus_only and not proxy_mask[i, j]:
+                continue  # опубликованная семантика: центр обязан быть в proxy_mask
             if np.isnan(orbit_values[i, j]):
                 continue
 
@@ -1092,6 +1157,8 @@ def compute_z_local(
     reproject_scale_m: float = 5500.0,
     min_annulus_count: int = MIN_ANNULUS_COUNT_DEFAULT,
     annulus_count_kernel: ee.Kernel | None = None,
+    annulus_only: bool = False,
+    mad_floor_ppb: float = 0.0,
 ) -> ee.Image:
     """
     Algorithm v3.0.4 §3.4.3: per-orbit local annulus Z-score (server-side EE).
@@ -1169,7 +1236,11 @@ def compute_z_local(
         .reduceNeighborhood(
             reducer=ee.Reducer.median(),
             kernel=annulus_kernel,
-            skipMasked=True,
+            # annulus_only=False (опубликованный каталог): выход маскируется там,
+            # где центральный пиксель вне proxy_mask — маска ограничивает и кольцо,
+            # и кандидатов. annulus_only=True: маска ограничивает только выборку
+            # кольца, z считается везде (Algorithm §3.6.2, docs/DECISION_background_reference.md)
+            skipMasked=not annulus_only,
         )
         .rename(f"{target_band}_median_local")
     )
@@ -1180,12 +1251,16 @@ def compute_z_local(
         abs_dev.reduceNeighborhood(
             reducer=ee.Reducer.median(),
             kernel=annulus_kernel,
-            skipMasked=True,
+            skipMasked=not annulus_only,  # см. комментарий у median_annulus
         )
         .rename(f"{target_band}_mad_local")
     )
     # σ_robust = 1.4826 × MAD (consistent estimator для Gaussian)
-    sigma_robust = mad_annulus.multiply(MAD_TO_SIGMA_GAUSSIAN)
+    # Нижняя граница MAD: вырожденное кольцо (MAD -> 0) даёт z в тысячах
+    # (2 из 1064 испытаний над заповедниками, step8f). 0.0 = без ограничения,
+    # ровно как в опубликованном каталоге
+    mad_for_sigma = mad_annulus.max(mad_floor_ppb) if mad_floor_ppb > 0 else mad_annulus
+    sigma_robust = mad_for_sigma.multiply(MAD_TO_SIGMA_GAUSSIAN)
 
     # Annulus sample count для validity check.
     # Шаг 6b1 P-02.0c bug fix: must use BINARY 0/1 annulus kernel для raw count.
@@ -1230,7 +1305,11 @@ __all__ = [
     "build_annulus_count_kernel",
     "build_annulus_weights_numpy",
     "compute_z_local",
+    "filter_candidates_to_buffers",
     "compute_z_local_numpy",
+    "ANNULUS_REFERENCE_INDUSTRIAL",
+    "ANNULUS_REFERENCE_CLEAN",
+    "ANNULUS_REFERENCES",
     "apply_two_condition_mask",
     # Detection cascade (P-02.0a heritage)
     "extract_clusters",

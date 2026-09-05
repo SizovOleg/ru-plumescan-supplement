@@ -158,6 +158,8 @@ def detect_orbit_clusters(
     min_wind_speed_ms: float = 2.0,
     temporal_window_hours: int = 3,
     search_radius_km: float = 50.0,
+    annulus_reference: str = "industrial_buffers",
+    mad_floor_ppb: float = 0.0,
 ) -> ee.FeatureCollection:
     """
     Stage 1 Path E per-orbit detection pipeline (Algorithm v3.1.1 server-side lazy).
@@ -223,7 +225,8 @@ def detect_orbit_clusters(
 
     # Step 1: Two-condition mask (Algorithm v3.0.3 §3.6, Шаг 5a)
     proxy_mask = detection_ch4.apply_two_condition_mask(
-        orbit_for_z, industrial_mask, target_band=target_band
+        orbit_for_z, industrial_mask, target_band=target_band,
+        annulus_reference=annulus_reference,
     )
 
     # Step 2: Compute Z_local (Algorithm v3.0.4 §3.4.3, Шаг 4a + 5b1 + 6b1 fix)
@@ -232,7 +235,10 @@ def detect_orbit_clusters(
         annulus_kernel,
         proxy_mask,
         target_band=target_band,
-        annulus_count_kernel=annulus_count_kernel,  # 6b1 fix: raw count via binary kernel
+        annulus_count_kernel=annulus_count_kernel,  # 6b1 fix: raw count via binary kernel,
+        # опубликованный эталон: центр обязан быть в маске (annulus_only=False)
+        annulus_only=(annulus_reference == detection_ch4.ANNULUS_REFERENCE_CLEAN),
+        mad_floor_ppb=mad_floor_ppb,
     )
 
     # Step 3: Threshold к binary detection mask
@@ -264,6 +270,13 @@ def detect_orbit_clusters(
         target_band=target_band,
         scale_m=ANALYSIS_SCALE_M,
     )
+
+    # Step 5d: Пространственное ограничение кандидатов (Algorithm v3.2.0 §3.6.6).
+    # При эталоне industrial_buffers ограничение присуще расчёту z (центр обязан
+    # лежать в буфере) — так построен опубликованный каталог. При regional_clean
+    # z считается везде, и ограничение задаётся явным фильтром.
+    if annulus_reference == detection_ch4.ANNULUS_REFERENCE_CLEAN:
+        attrs_fc = detection_ch4.filter_candidates_to_buffers(attrs_fc, industrial_mask)
 
     # Step 6: Annotate reference zone membership (Algorithm §3.7.1, Шаг 4b)
     # Cascade Priority 1 federal-protected zones override (DNA v2.3 §1.5)
@@ -330,6 +343,8 @@ def process_month(
     source_points_fc: ee.FeatureCollection,
     logger: logging.Logger,
     annulus_count_kernel: ee.Kernel | None = None,
+    annulus_reference: str = "industrial_buffers",
+    mad_floor_ppb: float = 0.0,
 ) -> ee.FeatureCollection:
     """
     Process все orbits в given month → merged cluster FC (Path E v3.1.1).
@@ -368,6 +383,8 @@ def process_month(
             source_points_fc=source_points_fc,
             month=month,
             annulus_count_kernel=annulus_count_kernel,
+            annulus_reference=annulus_reference,
+            mad_floor_ppb=mad_floor_ppb,
         )
 
     orbit_list = collection.toList(collection.size())
@@ -386,6 +403,8 @@ def process_year(
     *,
     aoi_bbox: tuple = AOI_BBOX,
     months_subset: list[int] | None = None,
+    annulus_reference: str = "industrial_buffers",
+    mad_floor_ppb: float = 0.0,
 ) -> ee.FeatureCollection:
     """
     Build annual CH4 event catalog for given year.
@@ -476,6 +495,8 @@ def process_year(
             era5_collection=era5_collection,
             source_points_fc=source_points_fc,
             logger=logger,
+            annulus_reference=annulus_reference,
+            mad_floor_ppb=mad_floor_ppb,
         )
         month_fcs.append(month_fc)
 
@@ -568,7 +589,7 @@ def submit_monthly_chunk(
         config=config,
         config_id=config_preset,
         period=f"{year}_M{month:02d}",
-        algorithm_version="2.3.2",
+        algorithm_version="3.2.0",
         rna_version="1.2",
     )
     asset_id = INTERMEDIATE_MONTHLY_TEMPLATE.format(year=year, month=month)
@@ -579,6 +600,8 @@ def submit_monthly_chunk(
     monthly_fc = process_year(
         year=year,
         provenance=prov,
+        annulus_reference=config["background"]["annulus_reference"],
+        mad_floor_ppb=config["background"]["mad_floor_ppb"],
         overrides=overrides,
         logger=logger,
         months_subset=[month],
@@ -726,7 +749,7 @@ def combine_monthly_intermediates(
         config=config,
         config_id=f"{config_preset}_combine",
         period=f"{year}_combined",
-        algorithm_version="2.3.2",
+        algorithm_version="3.2.0",
         rna_version="1.2",
     )
 
@@ -988,7 +1011,7 @@ def main() -> int:
             config=config,
             config_id=args.config_preset,
             period=f"2019_{year}",
-            algorithm_version="2.3.2",
+            algorithm_version="3.2.0",
             rna_version="1.2",
         )
         logger.info(
@@ -1004,6 +1027,8 @@ def main() -> int:
         annual_fc = process_year(
             year=year,
             provenance=prov,
+            annulus_reference=config["background"]["annulus_reference"],
+            mad_floor_ppb=config["background"]["mad_floor_ppb"],
             overrides=overrides,
             logger=logger,
             months_subset=months_subset,

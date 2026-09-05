@@ -37,7 +37,7 @@ The governing principle: **an anomaly is defined relative to the local backgroun
 
 ### 3.1. Local annulus
 
-For each pixel the background is estimated over an annular neighbourhood:
+For each pixel the background is estimated over an annular neighbourhood, using the pixels that lie inside infrastructure buffer zones (the `industrial_buffers` reference, see §3.2):
 
 | Parameter | Value |
 |---|---|
@@ -69,9 +69,9 @@ The factor 1.4826 scales MAD to standard-deviation units for a normal distributi
 
 ### 3.4. Masking
 
-Two conditions are applied. The first is retrieval validity at the orbit level. The second excludes the zone of industrial objects from the **background estimate** (not from the search area) using per-type buffers: gas fields 50 km, high-confidence flares 30 km, low-confidence flares 15 km, thermal power plants 30 km, plus urban areas.
+Two conditions are applied. The first is retrieval validity at the orbit level. The second sets the **background reference** and, with it, the search area: both the annulus sample and the candidates are confined to infrastructure buffer zones by type — gas fields 50 km, high-confidence flares 30 km, low-confidence flares 15 km, thermal power plants and other objects 30 km. This is the configuration parameter `background.annulus_reference = industrial_buffers` (Algorithm §3.6.2); the alternative reference `regional_clean` — the annulus over clean pixels with an explicit buffer filter on candidates — is kept for comparisons and for other gases. The industrial reference is a measured choice: in summer the clean surroundings of the fields are wetlands with systematically higher methane (the clean-ring median sits 4–9 ppb above the industrial-ring median at the published events), and with the regional reference the detector fires over the nature reserves on 7.7% of overpasses.
 
-Wetlands and water surfaces are deliberately **not** excluded: mires are themselves a methane source, and excluding them would hollow out the background estimate across most of the plain, while water is already removed by the product's native quality control.
+No separate wetland or water masks are applied: wetlands are kept out of the background by the choice of reference itself (they do not fall inside infrastructure buffers), and water is already removed by the product's native quality control.
 
 ---
 

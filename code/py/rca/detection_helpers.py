@@ -890,6 +890,17 @@ def prepare_source_points_categories(
 # ---------------------------------------------------------------------------
 
 
+# Эталон фона по пресету (Algorithm v3.2.0 §3.6.2; docs/DECISION_background_reference.md).
+# "default" — опубликованный каталог: кольцо по буферам инфраструктуры, без нижней
+# границы MAD (побитовая воспроизводимость). "regional_clean" — кольцо по чистым
+# пикселям с явным буферным фильтром кандидатов и защитой от вырожденного кольца.
+# Неизвестный пресет наследует опубликованный эталон — так работали все прежние прогоны.
+BACKGROUND_PRESETS: dict[str, dict[str, Any]] = {
+    "default": {"annulus_reference": "industrial_buffers", "mad_floor_ppb": 0.0},
+    "regional_clean": {"annulus_reference": "regional_clean", "mad_floor_ppb": 1.0},
+}
+
+
 def build_event_config(target_year: int, *, config_preset: str = "default") -> dict[str, Any]:
     """
     Construct config dict для CH4 event catalog Run.
@@ -922,6 +933,8 @@ def build_event_config(target_year: int, *, config_preset: str = "default") -> d
             "mode": "reference_only",  # TD-0032 — Phase 2A v1 simplification
             "consistency_tolerance_ppb": 30.0,
             "sigma_floor_ppb": 15.0,
+            # v3.2.0: эталон кольца и нижняя граница MAD входят в params_hash
+            **BACKGROUND_PRESETS.get(config_preset, BACKGROUND_PRESETS["default"]),
         },
         # Cluster extraction (Algorithm §3.7)
         "object": {
