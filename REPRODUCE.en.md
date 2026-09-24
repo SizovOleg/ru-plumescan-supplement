@@ -16,7 +16,7 @@ No installation required.
 | [`data/catalog_ch4_west_siberia.geojson`](data/catalog_ch4_west_siberia.geojson) | event outlines, CRS84 | QGIS, ArcGIS, geopandas, leaflet |
 | [`data/zapsib_boundary.geojson`](data/zapsib_boundary.geojson) | area-of-interest boundary | same |
 
-All 59 fields are described in the [data dictionary](data/DATA_DICTIONARY.en.md).
+All 60 fields are described in the [data dictionary](data/DATA_DICTIONARY.en.md). The paper's tables as CSV, with instructions for recomputing them, are in [`data/tables/`](data/tables/README.en.md).
 
 ```python
 import pandas as pd
@@ -46,6 +46,8 @@ earthengine authenticate
 ```
 
 ⚠️ A full rebuild of the seven-year catalogue costs **on the order of 400 EECU-hours**. It is not an instant operation and consumes the project's compute quota. Steps 3 and 4 below are incomparably cheaper — they read data that already exists.
+
+**Code version.** The catalogue was built with version 3.1.4; the code in `code/` is version 3.2.0, in which the annulus background reference became a named configuration parameter (a preset). The `default` preset with the `industrial_buffers` reference reproduces the published catalogue: for 121 of the 122 events the maximum z-score matches to two decimals, the exception being CH4-WSP-006 (the comparison is run by `code/py/analysis/step8e_event_ring_bias.py`). A rebuilt catalogue will nevertheless carry a different `params_hash`, because the reference keys enter the parameter snapshot (for 2021, `71d2a7c0…` instead of the published `1d909d3a…`).
 
 ---
 

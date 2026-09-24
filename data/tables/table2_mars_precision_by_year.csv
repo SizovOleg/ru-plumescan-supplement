@@ -1,0 +1,6 @@
+year,matched_events,catalogue_events,precision_pct,ci95_low_pct,ci95_high_pct,mars_detections_inside_plain
+2022,0,7,,,,0
+2023,12,21,57.1,36.5,75.5,17
+2024,32,39,82.1,67.3,91.0,53
+2025,9,14,64.3,38.8,83.7,82
+2023-2025,53,74,71.6,60.5,80.6,152

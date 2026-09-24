@@ -24,8 +24,8 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 |---|---|---|---|---|---|
 | `centroid_lon` | degrees east | float | 122 of 122 | 61.957 … 82.825 | Longitude of the cluster centroid, WGS 84. |
 | `centroid_lat` | degrees north | float | 122 of 122 | 54.059 … 71.767 | Latitude of the cluster centroid, WGS 84. |
-| `area_km2` | km^2 | float | 122 of 122 | 243.074 … 3264.018 | Cluster area, computed in the equal-area projection EPSG:6931 at 5.5 km cell size. |
-| `n_pixels` | — | integer | 122 of 122 | 5 … 67 | Number of pixels in the cluster per the final geometry. Detection threshold is at least 5 pixels. |
+| `area_km2` | km^2 | float | 122 of 122 | 243.074 … 3264.018 | Area of the cluster outline as measured by Earth Engine (geometry().area()). The outline is built on the 7 km analysis grid in the equal-area projection EPSG:6931, so each pixel (field count) accounts for 48.5–48.9 km² (nominally 7 × 7 = 49 km²) and the minimum area at 5 pixels is 243 km². |
+| `n_pixels` | — | integer | 122 of 122 | 5 … 67 | Number of 7 km analysis-grid pixels inside the final cluster outline; max_z, mean_z and the enhancements are computed over them. Detection requires at least 5 pixels connected by side or corner (8-connectivity). |
 | `count` | — | integer | 122 of 122 | 5 … 67 | Pixel counter inherited from the aggregation stage. Equals n_pixels in every record but one (see the known limitations section). |
 | `plume_axis_deg` | degrees | float | 122 of 122 | 0.561 … 180 | Orientation of the cluster major axis (0-180°), obtained by eigen-decomposition with a cosine-latitude correction. |
 
@@ -44,9 +44,9 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 |---|---|---|---|---|---|
 | `artifact_likely` | — | integer | 122 of 122 | 0 … 1 | 1 — the event is classified as a likely retrieval artefact, 0 — as valid. Derived from a combination of surface indicators (albedo, snow, dark underlying surface). The catalogue holds 88 valid events and 34 likely artefacts. |
 | `artifact_likely_albedo_positive` | — | integer | 122 of 122 | 0 … 1 | 1 — the artefact indicator was triggered specifically by a positive albedo correlation (bright surface, likely snow influence). |
-| `corr_albedo` | — | float | 122 of 122 | -0.873 … 0.95 | Correlation between the XCH4 enhancement and surface albedo within the cluster. Values near +1 indicate a bright-surface retrieval artefact, near -1 a dark or wet surface. |
+| `corr_albedo` | — | float | 122 of 122 | -0.873 … 0.95 | Pearson correlation between the z-score and surface reflectance across the cluster pixels (5.5 km scale). Reflectance is MODIS MCD43A4 v6.1, band Nadir_Reflectance_Band6 (1628–1652 nm), averaged over ±8 days around the overpass. Values near +1 indicate a bright-surface retrieval artefact, near -1 a dark or wet surface. |
 | `surface_confounded_dark` | — | integer | 122 of 122 | 0 … 1 | 1 — the signal is presumed confounded by a dark underlying surface (water, wet mires). |
-| `cluster_overlap_snow_fraction` | fraction | float | 122 of 122 | 0 … 1 | Fraction of the cluster area overlapped by snow cover (0-1). |
+| `cluster_overlap_snow_fraction` | fraction | float | 122 of 122 | 0 … 1 | Fraction of the cluster area under snow (0-1): the share of MODIS MOD10A1 v6.1 pixels (NDSI_Snow_Cover, averaged over ±1 day around the overpass) above 50, at 500 m scale. |
 | `event_class` | — | text | 122 of 122 | `CH4_only`, `diffuse_CH4`, `wind_ambiguous` | Event category: CH4_only — isolated methane anomaly; diffuse_CH4 — diffuse enhancement without a pronounced axis; wind_ambiguous — wind conditions do not allow an unambiguous link to a source. |
 | `qa_flags` | — | text | 122 of 122 | `«»`, `zone_boundary_adjustment_applied` | Quality-control flag string. An empty string means no flags; zone_boundary_adjustment_applied means a background-zone boundary correction was applied. |
 | `zone_boundary_step_ppb` | ppb | integer | 33 of 122 | 16 … 16 | Magnitude of the background step at the zone boundary where the correction was applied. Populated only for records carrying the corresponding qa_flags entry. |
@@ -57,17 +57,17 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 
 | Field | Unit | Type | Filled | Range / values | Description |
 |---|---|---|---|---|---|
-| `wind_state` | — | text | 122 of 122 | `aligned`, `insufficient_wind`, `misaligned` | Overall wind assessment: aligned — the plume axis agrees with wind direction; misaligned — it does not; insufficient_wind — wind speed is too low for a meaningful assessment. |
-| `wind_alignment_score` | — | float | 122 of 122 | 0.001 … 0.992 | Measure of agreement between the plume axis and wind direction, 0-1, where 1 is exact agreement. |
-| `wind_dir_deg` | degrees | float | 122 of 122 | 4.008 … 350.772 | Wind direction at 10 m, measured clockwise from north. |
-| `wind_speed` | m/s | float | 122 of 122 | 0.154 … 12.513 | Wind speed at 10 m. |
-| `wind_u` | m/s | float | 122 of 122 | -7.421 … 10.345 | Zonal (west-east) wind component at 10 m. |
-| `wind_v` | m/s | float | 122 of 122 | -12.364 … 7.615 | Meridional (south-north) wind component at 10 m. |
-| `wind_u_850hPa` | m/s | float | 122 of 122 | -9.921 … 17.298 | Zonal wind component at 850 hPa — a check on the vertical consistency of transport. |
-| `wind_v_850hPa` | m/s | float | 122 of 122 | -18.263 … 14.784 | Meridional wind component at 850 hPa. |
-| `wind_consistent` | — | integer | 113 of 122 | 0 … 1 | 1 — wind directions at 10 m and 850 hPa agree. An empty value (9 records) means the check was not performed. |
-| `wind_consistency_diff_deg` | degrees | float | 122 of 122 | 1.384 … 160.038 | Angular difference between wind directions at 10 m and 850 hPa. |
-| `wind_levels_inconsistent_qa` | — | integer | 122 of 122 | 0 … 1 | 1 — the level disagreement was deemed substantial and flagged by quality control. |
+| `wind_state` | — | text | 122 of 122 | `aligned`, `insufficient_wind`, `misaligned` | Overall assessment of the 10 m wind: aligned — the angle between the cluster axis and the wind direction is at most 30° with a speed of at least 2 m/s; misaligned — the angle exceeds 30° at such a speed; insufficient_wind — the speed is below 2 m/s and agreement is not assessed. |
+| `wind_alignment_score` | — | float | 122 of 122 | 0.001 … 0.992 | Agreement between the cluster axis and the 10 m wind direction: 1 - Δθ/90, where Δθ is the angle between them (0-90°). One means exact agreement; the 30° threshold corresponds to 0.667. It is computed even at low wind speed. |
+| `wind_dir_deg` | degrees | float | 122 of 122 | 4.008 … 350.772 | Direction the 10 m wind blows from, clockwise from north. The ERA5 components are vector-averaged over ±3 h around the overpass and sampled at the cluster centroid. |
+| `wind_speed` | m/s | float | 122 of 122 | 0.154 … 12.513 | Wind speed at 10 m from the components averaged over ±3 h. |
+| `wind_u` | m/s | float | 122 of 122 | -7.421 … 10.345 | Zonal (west-east) wind component at 10 m, averaged over ±3 h around the overpass. |
+| `wind_v` | m/s | float | 122 of 122 | -12.364 … 7.615 | Meridional (south-north) wind component at 10 m, averaged over ±3 h around the overpass. |
+| `wind_u_850hPa` | m/s | float | 122 of 122 | -9.921 … 17.298 | Zonal wind component at 850 hPa (same averaging). Used only for the wind_levels_inconsistent_qa flag. |
+| `wind_v_850hPa` | m/s | float | 122 of 122 | -18.263 … 14.784 | Meridional wind component at 850 hPa (same averaging). |
+| `wind_consistent` | — | integer | 113 of 122 | 0 … 1 | 1 — the cluster axis agrees with the 10 m wind direction (angle at most 30°), 0 — it does not. An empty value (9 records) means the wind speed was below 2 m/s and agreement was not assessed. Matches wind_state (aligned — 1, misaligned — 0); unrelated to the 850 hPa level. |
+| `wind_consistency_diff_deg` | degrees | float | 122 of 122 | 1.384 … 160.038 | Angular difference between the wind directions at 10 m and 850 hPa (0-180°). |
+| `wind_levels_inconsistent_qa` | — | integer | 122 of 122 | 0 … 1 | 1 — the wind directions at 10 m and 850 hPa differ by more than 45° (43 records). A quality-control flag only: it does not affect the event category. |
 | `wind_level` | — | text | 122 of 122 | `10m` | Level from which the primary wind fields were taken. Throughout the catalogue this is 10 m. |
 | `wind_source` | — | text | 122 of 122 | `ERA5_HOURLY_10m` | Wind data source: ERA5 hourly reanalysis, 10 m field. |
 
@@ -75,9 +75,9 @@ Description of every field in `catalog_ch4_west_siberia.csv` and `catalog_ch4_we
 
 | Field | Unit | Type | Filled | Range / values | Description |
 |---|---|---|---|---|---|
-| `nearest_source_type` | — | text | 122 of 122 | `gas_field`, `tpp_gres`, `viirs_flare_high`, `viirs_flare_low` | Type of the nearest candidate source: viirs_flare_high and viirs_flare_low — VIIRS-detected flares at high and low confidence; gas_field — gas field; tpp_gres — thermal power plant. |
-| `nearest_source_distance_km` | km | float | 122 of 122 | 1.116 … 49.243 | Great-circle distance from the event centroid to the nearest source. All catalogue values are within 50 km. |
-| `nearest_source_id` | — | text | 122 of 122 | 81 distinct values | Identifier of the nearest source in the project industrial-object registry. One source may correspond to several events. |
+| `nearest_source_type` | — | text | 122 of 122 | `gas_field`, `tpp_gres`, `viirs_flare_high`, `viirs_flare_low` | Category of the source assigned to the event: within 50 km of the centroid the registry object of the highest-priority category is chosen, the nearest one among equal priorities (METHODS section 4.2), so an object of another category may lie closer. gas_field — oil and gas field (oil and gas fields are not separated); viirs_flare_high and viirs_flare_low — flares from VIIRS bright night-time sources at high (radiance at least 100 nW/(cm²·sr)) and low confidence; tpp_gres — thermal power plant. |
+| `nearest_source_distance_km` | km | float | 122 of 122 | 1.116 … 49.243 | Great-circle distance from the event centroid to the assigned source (see nearest_source_type). The search radius is 50 km, so all catalogue values are within 50 km. |
+| `nearest_source_id` | — | text | 122 of 122 | 81 distinct values | Identifier of the assigned source in the project industrial-object registry (the registry is not part of this package, see METHODS section 4.2). One source may correspond to several events. |
 
 ## Cross-check against independent catalogues
 

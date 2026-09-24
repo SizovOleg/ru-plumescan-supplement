@@ -1,0 +1,7 @@
+row_id,label,k,n,estimate,ci95_low,ci95_high,article_value,source_file
+detection_all,"Detection, all injections (1-10 t/h)",10,30,0.3333,0.1923,0.5122,0.33,p_02_0e_synthetic_pod.json
+detection_coverage_ge_200,"Detection, >= 200 valid L3 pixels in the 15 km disc",10,17,0.5882,0.3601,0.7839,0.59,p_02_0e_synthetic_pod.json
+detection_coverage_ge_200_flux_gt_6,"Detection, >= 200 valid pixels and flux > 6 t/h",8,8,1.0000,0.6756,1.0000,1.00,p_02_0e_synthetic_pod.json
+miss_all,"Miss, all injections",20,30,0.6667,0.4878,0.8077,0.67,p_02_0e_synthetic_pod.json
+false_alarm_all_trials,"Candidate-stage alarm rate over the reserves, all trials",84,1064,0.0789,0.0642,0.0967,0.077,p_02_0e_clean_zone_false_alarms.json
+false_alarm_excluding_degenerate,"Same, without the two degenerate annuli (MAD ~ 0)",82,1062,0.0772,0.0626,0.0948,0.077,p_02_0e_clean_zone_false_alarms.json

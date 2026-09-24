@@ -6,8 +6,9 @@ authors:
   - given-names: "Oleg"
     family-names: "Sizov"
     affiliation: "Oil and Gas Research Institute of the Russian Academy of Sciences (IPNG RAS)"
-version: "1.0.0"
-date-released: "2026-08-09"
+version: "1.1.0"
+date-released: "2026-09-24"
+repository-code: "https://github.com/SizovOleg/ru-plumescan-supplement"
 license: CC-BY-4.0
 license-url: "https://creativecommons.org/licenses/by/4.0/"
 keywords:
@@ -34,7 +35,7 @@ abstract: >-
   carries signal strength, geometry, ERA5 wind conditions, nearest candidate
   source, artefact classification, full processing provenance, and binary match
   flags against two independent catalogues. The package includes the catalogue
-  in CSV and GeoJSON, a dictionary of all 59 fields, the methodology
+  in CSV and GeoJSON, a dictionary of all 60 fields, the methodology
   description, the source code, and the paper figures. Note that the
   independent catalogues used for cross-checking are not ground truth: they
   target gas-field super-emitters and systematically omit flaring, which the
